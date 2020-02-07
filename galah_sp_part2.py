@@ -78,6 +78,13 @@ total_ccd_relative_flux_error = np.concatenate(
 # Do we need to check for 0 flux? @@@@@@@@@@@@@@@@@
 
 
+# It seems we're now determining the centre of the peaks and then applying the resolution factor (which is a stated variable)
+# Idl just uses fxpar so I am not sure which file it's using to determine slitmask resolution? Are they all the same @@@@@@@
+if ccd1_object_line_mask[0].header['SLITMASK'] == 'IN      ': # High res
+    resolution_factor = 1.789
+else: # low
+    resolution_factor = 1.0
+
 "resolution time here. Same as from makestruct at the beginning, getting the concatented resolutions @@@@@@@@@@@"
 #mrdfits reads fits file of ccd1_piv etc. and saves the data as res1. The piv files are essentially the resolution files
 # I believe
@@ -98,7 +105,6 @@ object_pivot=int(str(galah_sp_part1.object_pivot)[-3:])
 # Extracting the row of data of ccd1 that matches the piv number (-1 as piv starts at 1)
 # What IS piv why are we interested in the piv valued row of the data? @@@@@@@@@@@@@@@@@
 ccd1_obj_piv_y = (ccd1_res_data[object_pivot-1])
-
 # Creates a wavelength list from starting CRVAL1 (4700) in steps of CRDELT1 (0.1) until it matches the array len of NAXIS1
 ccd1_wavelength_x = ccd1_res_file[0].header['CRVAL1'] + (ccd1_res_file[0].header['CDELT1'] * np.arange(ccd1_res_file[0].header['NAXIS1']))
 #                               start                        steps                            number of data points
@@ -113,8 +119,9 @@ ccd4_wavelength_x = ccd4_res_file[0].header['CRVAL1'] + (ccd4_res_file[0].header
 
 # combines the arrays together to interpolate them
 wavelength_res_x_collection = np.concatenate([ccd1_wavelength_x, ccd2_wavelength_x, ccd3_wavelength_x, ccd4_wavelength_x])
-wavelength_piv_y_collection = np.concatenate([ccd1_obj_piv_y, ccd2_obj_piv_y, ccd3_obj_piv_y, ccd4_obj_piv_y])
-
+wavelength_res_y_collection = np.concatenate([ccd1_obj_piv_y, ccd2_obj_piv_y, ccd3_obj_piv_y, ccd4_obj_piv_y])
+# iterpolate the res collections to find wlpeak for them later
+interpolation = interp1d(wavelength_res_x_collection, wavelength_res_y_collection)
 
 " Read in reduction pipeline output"
 # What the heck is iraf_dr53
