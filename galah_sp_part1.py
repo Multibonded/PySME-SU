@@ -14,7 +14,7 @@ setup_for_obs = "dr2" #input("Setup, please.")
 
 obs_name = str(field_for_obs)+"_"+str(object_for_obs)+"_"+str(setup_for_obs)+"_Sp"
 obs_file = str(obs_name+".dat")
-
+print("obs name", obs_name)
 # Not sure what this is, just leavin' it here.
 specformat     = '(d9.4,2x,3d25.8)'
 infoformat     = '(a35,7f8.2,i4,a4)'
@@ -24,13 +24,16 @@ maskformat     = '(d10.4,2d10.2)'
 
 version        = 5.36
 #  flag for the radial velocity to determine how to process it
-vrad_flag      = -1
-# Flag for the scale of the continuum line
-cscale_flag    = 1
+# -1 is a global vrad, 0 is a separate vrad for each wavelength segment. Not sure where it's change.d
+radial_velocity_flag      = -1
+# Flag for the scale of the continuum line, cscale_flag
+continuum_scale_flag    = 1
 # visini is, I believe a replacement for rotational velocity essentially
-vsini          = 2.0
-vradglob       = 0.0
-ab_free        = np.zeros(99)
+rotational_velocity          = 2.0
+radial_velocity_global       = 0.0
+# Array of flags (0 or 1), specifying for which of the 99 atomic elements the
+    # abundances are free parameters.
+atomic_abundances_free_parameters        = np.zeros(99) # ab_free
 auto_alpha     = 1
 depthmin       = 0.1
 print('Using minimum depth ',depthmin)

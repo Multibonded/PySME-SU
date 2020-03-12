@@ -67,8 +67,8 @@ def cannon_attempt_1(object_cannon_data):
         # function to give the micro and macro turbulence for cool dwarves. Metalicity is unneeded with the current method.
 
         turbulences_list = (microturbulence_macroturbulence(effective_temperature, log_surface_gravity, metalicity))
-        microturbulence_velocity=turbulences_list[0]
-        macrotublence_velocity=turbulences_list[1]
+        microturbulence_velocity = turbulences_list[0]
+        macrotublence_velocity = turbulences_list[1]
         rotational_velocity = macrotublence_velocity
         # We seem to turn vmac to 0 and instead assign vsini to its value, what the what?
         macrotublence_velocity = 0.0

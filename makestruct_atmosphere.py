@@ -16,12 +16,4 @@ atmosphere_grid_file = io.readsav(r"C:\Users\jama2357\Documents\Galafiles\sme_53
 hydrogen_grid = open(r'C:\Users\jama2357\Documents\Galafiles\sme_536\NLTE\marcs2012_H2018.grd ', 'rb')
 iron_grid = open(r'C:\Users\jama2357\Documents\Galafiles\sme_536\NLTE\marcs2012_Fe2016.grd ', 'rb')
 atmosphere_abundance_grid = np.array([hydrogen_grid, iron_grid])
-# Tau is the optical depth at some wavelength reference for continuum to determine the deepest point of interest.
-# You can plot T against log tau and when x is 0, it is opaque so anything below that we are viewing.
-# Rhox is the other option of column mass (accumulated mass) of the atmosphere. These are both pretty bad as
-# they cause some kind of spike in the abundance of stars at temperatures but people are working on replacing them
-# with a neural network.
-atmosphere_depth = "TAU"
-atmosphere_interpolation = "RHOX"
-# Plane parallel
-atmoshpere_geometry = "PP"
+

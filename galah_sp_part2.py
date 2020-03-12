@@ -191,14 +191,13 @@ sky_mask_interpolated_wavelengths = sky_mask_interpolation(total_ccd_wavelength)
 total_ccd_relative_flux_error = total_ccd_relative_flux_error+sky_mask_interpolated_wavelengths
 
 
+"Final uncertainties UOB"
 # Relative error to actual error.
 total_ccd_flux_error_uob = total_ccd_relative_flux_error * total_ccd_sob_flux
-
 "There's a part here about making sure sob is finite, is this important? Does our code work when any values are infinite?" \
-"Should check for int overflow maybe?! @@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-
+"Should check for int overflow maybe? @@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 # Saves the arrays as columns seperated by two spaces (delimeter)
-np.savetxt('output.dat', np.c_[total_ccd_wavelength,total_ccd_sob_flux,total_ccd_flux_error_uob], delimiter='  ')
+np.savetxt('SPECTRA/'+galah_sp_part1.obs_file, np.c_[total_ccd_wavelength,total_ccd_sob_flux,total_ccd_flux_error_uob], delimiter='  ')
 print(total_ccd_wavelength,total_ccd_sob_flux,total_ccd_flux_error_uob)
 # The smooth(sob, 10, /NaN) in the idl code boxcar smoothing to fabricate a new point for it
 # we do the same here with convolve. We don't need it. igore it.

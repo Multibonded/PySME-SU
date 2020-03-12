@@ -4,13 +4,11 @@ un-log Hydrogen because apparently SME doesn't want loggedH. Still confused abou
 
 
 
-import makestruct_cannon_parameters
+import galah_sp_part3
 import numpy as np
 from scipy.interpolate import interp1d
-import math
-import galah_sp_part3
 # metalicity taken from the file that gets it from the cannon fits file
-metalicity_modified = makestruct_cannon_parameters.metalicity_cannon
+metalicity_modified = galah_sp_part3.metalicity
 # It also calls for enoh12 and alpha keyword? But it produces eonh12, but alpha is still a mystery...
 
 """Skipping
@@ -86,7 +84,7 @@ element_list = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg'
         'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce',
         'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir',
         'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm',
-        'Bk', 'Cs', 'Es']
+        'Bk', 'Cf', 'Es']
 
 """;Build array of atomic weights.
 ;From Loss, R. D. 2003, Pure Appl. Chem., 75, 1107, "Atomic Weights
