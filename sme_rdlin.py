@@ -278,7 +278,7 @@ def run_merger():
     # The reduced amount of spectral lines we need to look at, applied to masterfile
     data_index = np.loadtxt('alllinesindex.csv', delimiter=" ").astype(int)
     #data_index= data_index.astype(int)
-    master_line_list = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\LINELIST/%s' % line_list)[1]
+    master_line_list = fits.open(line_list)[1]
     #master_line_list.data = master_line_list.data[data_index]
     rows_in_line_list = len(master_line_list.data['lambda'])
     #line_atomic, line_lande, line_depth, line_data_references, line_species, line_j_e_array, lower_level, upper_level, lu_lande = line_merging(master_line_list)

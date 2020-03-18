@@ -5,18 +5,17 @@ interpolating to be able to find resolution at peak wavelengths that we calculat
 We open the 4 ccd fits files to produce a telephonenumber_Sp file that contains Wavelength array, observed flux sign (sob)
 uncertainity in flux (uob)(essentially error), smod (not important now) and mod (Idk) that we call in make_struct
 to modify the wavelength array by the radial velocity doppler shift and make some sme variables.
+Running create_structure should be the only thing needed.
 """
 
 from astropy.io import fits
 import galah_sp_part1
-import galah_sp_part2
 import galah_sp_part3
 import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
 # Import the wavelength, flux, and error from the ccd readings
 import galah_sp_part2
-#from galah_sp_part2 import total_ccd_wavelength, total_ccd_sob_flux, total_ccd_flux_error_uob, resolution_factor
 import pickle
 from datetime import date
 import sme_rdlin
@@ -161,13 +160,13 @@ def segment_mask_creation(segment_mask):
 def resolution_interpolation(object_pivot):
     # mrdfits reads fits file of ccd1_piv etc. and saves the data as res1. The piv files are essentially the resolution files
     # I believe
-    ccd1_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd1_piv.fits', ext=0)
+    ccd1_res_file = fits.open(r'ccd1_piv.fits', ext=0)
     ccd1_res_data = (ccd1_res_file[0].data)
-    ccd2_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd2_piv.fits', ext=0)
+    ccd2_res_file = fits.open(r'ccd2_piv.fits', ext=0)
     ccd2_res_data = (ccd2_res_file[0].data)
-    ccd3_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd3_piv.fits', ext=0)
+    ccd3_res_file = fits.open(r'ccd3_piv.fits', ext=0)
     ccd3_res_data = (ccd3_res_file[0].data)
-    ccd4_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd4_piv.fits', ext=0)
+    ccd4_res_file = fits.open(r'ccd4_piv.fits', ext=0)
     ccd4_res_data = (ccd4_res_file[0].data)
 
     # We're making an array of the resolution of the (actually x) axis
@@ -261,7 +260,7 @@ def wavelengths_flux_inside_segments(segment_mask_data_with_res, total_ccd_wavel
         # the wind SME wants seems to just be the final values so keep a note of that @@@@@@@@@@@@@@@
         wavelength_start_end_index[segment, 0] = (wavelength_inside_segmask_index[0][0])
         wavelength_start_end_index[segment, 1] = (wavelength_inside_segmask_index[-1][-1])
-        ccd_resolution_of_segment.extend(segment_mask_data_with_res['Resolution'][segment])
+        ccd_resolution_of_segment.append(segment_mask_data_with_res['Resolution'][segment])
     # Turning lists into arrays for numpy indexing with np.where. Will this slow things down too much by having both list
     # and array? Delete one? Or does the creation take too long? no. probs not.
     ccd_wavelengths_inside_segmask_array = np.array(ccd_wavelengths_inside_segmask)
@@ -288,9 +287,10 @@ def find_segment_limits(wavelength_start_end_index, total_ccd_wavelength_doppler
             int(wavelength_start_end_index[windex_row, 0])]
         segment_begin_end[windex_row, 1] = total_ccd_wavelength_dopplered[
             int(wavelength_start_end_index[windex_row, 1])]
-
+    return segment_begin_end
 
 # make_obs in idl, sets up the important wavelength, flux, and error of the important segments of wavelengths we have.
+# This is the first one to run I think.
 def object_array_setup():
 
     # We use the full setup file instead of the dummy/temp obsname file as we're trying to avoid constand looping.
@@ -340,7 +340,7 @@ def object_array_setup():
      # Returning the variables used for prenormalisation and the rest of makestruct. The first three are the important
     # data. Segment begin end is just made from the data (beginning and end wavelengths), but I'd rather not remake it each time.
     return ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array, ccd_flux_error_inside_segmask_array,\
-           segment_begin_end, wavelength_start_end_index
+           segment_begin_end, wavelength_start_end_index, ccd_resolution_of_segment_array
 
 
 # This ist he function to prenormalise the line. Calls on autonormalise, removes data that is too far away from the
@@ -405,7 +405,7 @@ def pre_normalise(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_
 
     # end of prenormalisation! Phew! Again we return the modified observational data that has been normalised (and some
     # of it has not?) @@
-    return ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array, ccd_flux_error_inside_segmask_array, segment_begin_end
+    return ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array, ccd_flux_error_inside_segmask_array
 
 
 # Open up the line and conituum masks for making mob/flagged fluxes
@@ -766,8 +766,9 @@ def produce_indexed_atomic_data(segment_begin_end, linemask_data, run = 2):
     upper_level, lu_lande
 
 
-def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array,
-                                     ccd_resolution_of_segment_array, segment_begin_end, linemask_data):
+# runs all the rest of 'em and creates the sme structure!
+"""Run this one!"""
+def create_structure():
 
     # ; set remaining variables, usually fixed?
     # Have I set these elsewhere with better names? @@@@@@@@@@@@@
@@ -832,11 +833,13 @@ def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segma
 
     # Produce the basic blocks of which wavelengths etc are inside our segment masks.
     ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array, ccd_flux_error_inside_segmask_array, \
-    segment_begin_end, wavelength_start_end_index = object_array_setup()
+    segment_begin_end, wavelength_start_end_index, ccd_resolution_of_segment_array = object_array_setup()
+
     number_of_segments = len(wavelength_start_end_index)
 
+    continuum_mask_data, linemask_data = open_masks()
 
-    if galah_sp_part1.vrad_flag == 0:
+    if galah_sp_part1.radial_velocity_flag == 0:
         # vrad. If flag is 0, we have individual radial velocities for each segment, else, it's global and thus not
         # an array.
         radial_velocity = np.zeros(number_of_segments)
@@ -845,7 +848,7 @@ def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segma
 
     # We want the conituum scale as 1 (2 values for each segment). 0 means one value per segment, negative means global.
     if galah_sp_part1.continuum_scale_flag == 1:
-        continuum_scale = np.ones(2, number_of_segments)
+        continuum_scale = np.ones((2, number_of_segments))
     elif galah_sp_part1.continuum_scale_flag == 0:
         continuum_scale = np.ones(number_of_segments)
     else:
@@ -853,7 +856,7 @@ def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segma
 
     # Only normalise the data if that's how this file is called.
     if 'normalise_flag' in locals() and galah_sp_part1.continuum_scale_flag >= 0:
-        ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array, ccd_flux_error_inside_segmask_array, segment_begin_end =\
+        ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array, ccd_flux_error_inside_segmask_array  =\
             pre_normalise(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segmask_array,
                           ccd_flux_error_inside_segmask_array, segment_begin_end)
 
@@ -883,9 +886,7 @@ def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segma
   if strmatch(atmogrid_file, '*stagger-r*') then atmo_interp = 'RHOX'"""
     # Always two for fits files I think.
     short_format = 2
-    #Temp fix, get it from part 4 sp
-    if 'newsme' not in locals():
-        newsme = False
+
     # finally we set the dictionary! Contains the info for sme!
     sme = {'version':atmosphere_grid_version, 'id': id, 'teff': galah_sp_part3.effective_temperature, 'grav': galah_sp_part3.log_surface_gravity,
            'feh': galah_sp_part3.metalicity, 'vmic': galah_sp_part3.microturbulence_velocity, 'vmac': galah_sp_part3.macrotublence_velocity,
@@ -905,9 +906,7 @@ def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segma
            'wran': segment_begin_end, 'wave': ccd_wavelengths_inside_segmask_array, 'wind': wavelength_start_end_index,
            'mob': flagged_fluxes, 'ipres': ccd_resolution_of_segment_array, 'auto_alpha': galah_sp_part1.auto_alpha
            }
-    # Only used in newsme rusn I guess, so we delete it if it's not there
-    if not newsme:
-        del sme['line_lulande']
+
     # Only do so if nlte is set on (1)
     if galah_sp_part1.nonlte_flag:
         nltestruct = {'nlte_pro': 'sme_nlte', 'nlte_elem_flags': galah_sp_part1.nonlte_element_flags, 'nlte_subgrud_size':
@@ -915,10 +914,8 @@ def create_structure(ccd_wavelengths_inside_segmask_array, ccd_flux_inside_segma
         # In idl this is made super weirdly, there's a 'NLTE' in there if it's newsme? Is it a dictionary with create_struct
         # or not? It says they are assigned values but it's so weird. what I've done is the literal translation of
         # the code but it's IDL so who fricking knows.
-        if newsme:
-            sme = {sme: 'NLTE', nltestruct: nltestruct}
-        else:
-            sme = {sme: nltestruct}
+        sme['NLTE'] = nltestruct
+
     store_sme_input(sme)
 
 
@@ -934,9 +931,14 @@ def check_line_points(sme):
     i = np.where(sme['sme'])
 
 
+def run_sme(run = 0):
+    if run:
+        r"D:\Work\SME_574D:\Work\SME_574\sme_main.pro"
+        pass
 
 
 
 # this would be the reduced data array but we have it saved already. To do: write the code that reduces it and calls
 # on the reduction.
 segment_mask = galah_sp_part1.obs_name + '_Segm.dat' # is this the wrong one..
+create_structure()

@@ -171,7 +171,7 @@ cannon_version = 'iDR2'
 #object_id_desired = input("Gimme the id you want: ")
 object_id_desired = 150427000801049
 
-cannon_data = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\sobject_iraf_iDR2_cannon_small.fits")
+cannon_data = fits.open(r"sobject_iraf_iDR2_cannon_small.fits")
 #print(repr(cannon_data[1].header))
 
 # We want to isolate the sobject_id which is under TTYPE1

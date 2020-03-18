@@ -42,7 +42,8 @@ def set_cluster(cluster):
 # We use primary here for flux, and [1] (1st extention) for serr/uob. other ones are for more unimportant values.
 # calls for flux from f1, 0, h1 and serr from f1, 1, h1. (printing to a list called h1 basically.) We change serr to uob
 # later. The wavefits just makes the wavelength list.
-ccd1_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010491.fits")
+#ccd1_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010491.fits")
+ccd1_object_line_mask = fits.open(r"1504270008010491.fits")
 
 # Creating the wavelength array, the flux, and the relative error. The + * arrange just plots the wavelength array.
 ccd1_wavelength_x = ccd1_object_line_mask[0].header['CRVAL1'] +\
@@ -50,19 +51,25 @@ ccd1_wavelength_x = ccd1_object_line_mask[0].header['CRVAL1'] +\
 ccd1_sob_flux_y = ccd1_object_line_mask[0].data
 ccd1_relative_flux_error_y = ccd1_object_line_mask[1].data
 
-ccd2_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010492.fits")
+#ccd2_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010492.fits")
+ccd2_object_line_mask = fits.open(r"1504270008010492.fits")
+
 ccd2_wavelength_x = ccd2_object_line_mask[0].header['CRVAL1'] + \
                     (ccd2_object_line_mask[0].header['CDELT1'] * np.arange(ccd2_object_line_mask[0].header['NAXIS1']))
 ccd2_sob_flux_y = ccd2_object_line_mask[0].data
 ccd2_relative_flux_error_y = ccd2_object_line_mask[1].data
 
-ccd3_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010493.fits")
+#ccd3_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010493.fits")
+ccd3_object_line_mask = fits.open(r"1504270008010493.fits")
+
 ccd3_wavelength_x = ccd3_object_line_mask[0].header['CRVAL1'] + \
                     (ccd3_object_line_mask[0].header['CDELT1'] * np.arange(ccd3_object_line_mask[0].header['NAXIS1']))
 ccd3_sob_flux_y = ccd3_object_line_mask[0].data
 ccd3_relative_flux_error_y = ccd3_object_line_mask[1].data
 
-ccd4_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010494.fits")
+#ccd4_object_line_mask = fits.open(r"C:\Users\jama2357\Documents\Galafiles\GALAH\SPECTRA\test_lbol\1504270008010494.fits")
+ccd4_object_line_mask = fits.open(r"1504270008010494.fits")
+
 ccd4_wavelength_x = ccd4_object_line_mask[0].header['CRVAL1'] + \
                     (ccd4_object_line_mask[0].header['CDELT1'] * np.arange(ccd4_object_line_mask[0].header['NAXIS1']))
 ccd4_sob_flux_y = ccd4_object_line_mask[0].data
@@ -88,13 +95,13 @@ else: # low
 "resolution time here. Same as from makestruct at the beginning, getting the concatented resolutions @@@@@@@@@@@"
 #mrdfits reads fits file of ccd1_piv etc. and saves the data as res1. The piv files are essentially the resolution files
 # I believe
-ccd1_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd1_piv.fits', ext=0)
+ccd1_res_file = fits.open(r'ccd1_piv.fits', ext=0)
 ccd1_res_data = (ccd1_res_file[0].data)
-ccd2_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd2_piv.fits', ext=0)
+ccd2_res_file = fits.open(r'ccd2_piv.fits', ext=0)
 ccd2_res_data = (ccd2_res_file[0].data)
-ccd3_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd3_piv.fits', ext=0)
+ccd3_res_file = fits.open(r'ccd3_piv.fits', ext=0)
 ccd3_res_data = (ccd3_res_file[0].data)
-ccd4_res_file = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\ccd4_piv.fits', ext=0)
+ccd4_res_file = fits.open(r'ccd4_piv.fits', ext=0)
 ccd4_res_data = (ccd4_res_file[0].data)
 
 
@@ -127,7 +134,7 @@ interpolation = interp1d(wavelength_res_x_collection, wavelength_res_y_collectio
 # What the heck is iraf_dr53
 # Why is galah_sp calling on BailerJones k2seis fits file? What does it have that we don't in cannon? Just extra stuff I guess
 # Must changed iraf and stuff variable names once I find out what they stand for.
-reduction_and_analysis=fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\sobject_iraf_53'
+reduction_and_analysis=fits.open(r'sobject_iraf_53'
                                  r'_2MASS_GaiaDR2_WISE_PanSTARRSDR1_BailerJones_K2seis_small.fits')
 # Finds the index of where we can find our object id.
 reduction_and_analysis_index = np.where(reduction_and_analysis[1].data['sobject_id']==galah_sp_part1.object_for_obs)
@@ -144,7 +151,7 @@ velocity_barycenter = vbary
 # We're interpolating the telluric data on to the grid dimensions of the spectra we read.
 "Telluric correction (Incr errors), removest he wavelengths that the earths atmosphere produces"
 
-telluric = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\telluric_noao_21k.fits')
+telluric = fits.open(r'telluric_noao_21k.fits')
 # Taking the wavelengths from the telluric fits file
 telluric_wavelengths = telluric[1].data['wave']/(1-(velocity_barycenter/299792.458))
 # Made so we can append a new flux to it. Change it if we don't need the two if loops directly below. (max < max)
@@ -182,7 +189,7 @@ total_ccd_relative_flux_error = total_ccd_relative_flux_error/(telluric_interpol
 
 "Skyline correction (incr. errors)"
 # Again need to have a case for if the wavelengths we input are out of the range of the sky mask @@@@@@@@@@@@@@@@@@@@@@@
-sky_mask = fits.open(r'C:\Users\jama2357\Documents\Galafiles\GALAH\DATA\Skyspectrum_161105.fits')
+sky_mask = fits.open(r'Skyspectrum_161105.fits')
 # Adjusting for... sometrhing @@@@@@@@@@@@
 sky_mask_wavelengths = ((sky_mask[1].data['wave'])/(1-(velocity_barycenter/299792.458)))
 sky_mask_interpolation = interp1d(sky_mask_wavelengths, sky_mask[1].data['sky'])
@@ -197,10 +204,10 @@ total_ccd_flux_error_uob = total_ccd_relative_flux_error * total_ccd_sob_flux
 "There's a part here about making sure sob is finite, is this important? Does our code work when any values are infinite?" \
 "Should check for int overflow maybe? @@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 # Saves the arrays as columns seperated by two spaces (delimeter)
-np.savetxt('SPECTRA/'+galah_sp_part1.obs_file, np.c_[total_ccd_wavelength,total_ccd_sob_flux,total_ccd_flux_error_uob], delimiter='  ')
+np.savetxt(galah_sp_part1.obs_file, np.c_[total_ccd_wavelength,total_ccd_sob_flux,total_ccd_flux_error_uob], delimiter='  ')
 print(total_ccd_wavelength,total_ccd_sob_flux,total_ccd_flux_error_uob)
 # The smooth(sob, 10, /NaN) in the idl code boxcar smoothing to fabricate a new point for it
-# we do the same here with convolve. We don't need it. igore it.
+# we do the same here with convolve. We don't need it. ignore it.
 
 
 
